@@ -1,48 +1,28 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
-        
-    <!-- 自动将控制器加载到bean -->
-    <context:component-scan base-package="com.frame.controller" />
-    
-    <!-- 配置视图解析器 -->
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+
+    <!--spring可以自动去扫描base-pack下面或者子包下面的java文件，
+    如果扫描到有@Component @Controller@Service等这些注解的类，则把这些类注册为bean-->
+    <context:component-scan base-package="com.frame.controller">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+    </context:component-scan>
+
+    <mvc:annotation-driven />
+    <mvc:default-servlet-handler/>
+
+    <!-- 配置jsp文件的前后缀 “／”代表的是项目设定的Resource目录 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/views/" />
+        <property name="prefix" value="/"/>
         <property name="suffix" value=".jsp" />
-        <!-- 可为空,方便实现自已的依据扩展名来选择视图解释类的逻辑 -->
-        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
     </bean>
 
-    <!-- 返回json 需导入 jackson-annotations.jar，jackson-core.jar，jackson-databind.jar -->
-    <!-- 通过处理器映射DefaultAnnotationHandlerMapping来开启支持@Controller注解 -->
-    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
-    <!-- 通过处理器适配器AnnotationMethodHandlerAdapter来开启支持@RequestMapping注解 -->
-    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
-        <property name="messageConverters">
-            <list>
-                <!-- 配置返回字符串编码 -->
-                <bean
-                    class="org.springframework.http.converter.StringHttpMessageConverter">
-                    <property name="supportedMediaTypes">
-                        <list>
-                            <value>text/html; charset=UTF-8</value>
-                            <value>application/json;charset=UTF-8</value>
-                        </list>
-                    </property>
-                </bean>
-                <!-- 配置 json 转换器 -->
-                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-                    <property name="supportedMediaTypes">
-                        <list>
-                            <value>text/html; charset=UTF-8</value>
-                            <value>application/json;charset=UTF-8</value>
-                        </list>
-                    </property>
-                </bean>
-            </list>
-        </property>
-    </bean>
-    
 </beans>
